@@ -5,6 +5,5 @@ jobs:
       name: Testing
       runs-on: ubuntu-20.04
       steps:
-        -name: Test
-          run: python manage.py test
-          
+       - name: Test
+         run: python manage.py test
