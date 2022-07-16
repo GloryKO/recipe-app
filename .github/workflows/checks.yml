@@ -1,0 +1,10 @@
+===
+name : Checks
+on :[push]
+jobs:
+    test_lint:
+      name: Testing
+      runs-on: ubuntu-20.04
+      steps:
+        -name : Test
+          run: python manage.py test
