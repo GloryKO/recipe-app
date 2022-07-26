@@ -39,6 +39,10 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'food_recipe_app',
     'rest_framework',
+    'rest_framework.authtoken',
+    'drf_spectacular',
+    'user',
+    'recipe',
 ]
 
 MIDDLEWARE = [
@@ -123,3 +127,10 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+AUTH_USER_MODEL = 'food_recipe_app.Custom_User'
+
+REST_FRAMEWORK = {
+    'DEFAULT_SCHEMA_CLASS':'drf_spectacular.openapi.AutoSchema',
+
+}

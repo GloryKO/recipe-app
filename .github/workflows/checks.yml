@@ -7,5 +7,4 @@ jobs:
       steps:
        - name: Test
          run: |
-            cd ../../food_recipe
             python manage.py test
