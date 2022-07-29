@@ -74,20 +74,37 @@ class RecipeViewSet(viewsets.ModelViewSet):
             return Response(serializer.data,status=status.HTTP_200_OK)
         return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
 
-class TagViewSet(mixins.ListModelMixin,mixins.UpdateModelMixin,mixins.DestroyModelMixin,viewsets.GenericViewSet):
-    serializer_class = TagSerializer
-    queryset = Tag.objects.all()
+@extend_schema_view(
+    list=extend_schema(
+        parameters=[
+            OpenApiParameter(
+                'assigned_only',
+                OpenApiTypes.INT, enum=[0,1],
+                description='Filter by items attached to a recipe .'
+            )
+        ]
+    )
+)
+class BaseRecipeAttrViewSet(mixins.ListModelMixin,mixins.UpdateModelMixin,
+                    mixins.DestroyModelMixin,viewsets.GenericViewSet):
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
+        assigned_only = bool(int(self.request.query_params.get('assigned_only',0))
+        
+        )
+        queryset = self.queryset
+        if assigned_only:
+            queryset = queryset.filter(recipe__isnull=False)
         return self.queryset.filter(user=self.request.user).order_by('-name')
 
-class IngredientViewSet(mixins.ListModelMixin,mixins.UpdateModelMixin,mixins.DestroyModelMixin,viewsets.GenericViewSet):
+class TagViewSet(BaseRecipeAttrViewSet):
+    serializer_class = TagSerializer
+    queryset = Tag.objects.all()
+    
+
+class IngredientViewSet(BaseRecipeAttrViewSet):
     serializer_class =IngredientSerializer
     queryset = Ingredient.objects.all()
-    permission_classes =[IsAuthenticated]
-    authentication_classes = [TokenAuthentication]
-
-    def get_queryset(self):
-        return self.queryset.filter(user=self.request.user).order_by('-name')
+    
